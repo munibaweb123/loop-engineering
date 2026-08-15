@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Muniba Ahmed — Full-Stack Developer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="topbar" aria-label="Primary">
+  <a class="brand" href="#hero">Muniba Ahmed</a>
+  <div class="navlinks">
+    <a href="#about">About</a>
+    <a href="#projects">Work</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <button class="shift" id="shift" type="button" aria-pressed="false">Shift to day</button>
+</nav>
+
+<section id="hero">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <p class="kicker">Karachi → the world · overnight shift</p>
+      <h1>Muniba Ahmed</h1>
+      <p class="role">Full-Stack Developer — React / Next.js · Python (FastAPI) · PostgreSQL</p>
+      <p class="support">I ship production features end to end from the night shift, so the client&rsquo;s morning starts with working software.</p>
+      <p class="micro">Fully remote · 9:00 AM – 5:00 PM PST</p>
+    </div>
+    <img class="portrait" src="muniba.jpg" alt="Portrait of Muniba Ahmed">
+  </div>
+  <div class="seam" aria-hidden="true"><span class="sun"></span></div>
+</section>
+
+<main class="day">
+
+  <section id="about">
+    <h2>About</h2>
+    <p class="prose">Muniba is a full-stack developer in Karachi who works the overnight shift so clients in other time zones wake up to finished work. She builds React / Next.js front ends, Python (FastAPI) back ends, and PostgreSQL data layers, and ships them to Vercel, Render and AWS. The same features she builds for clients she teaches: at Panaversity Agent Factory she teaches AI engineering and web development to more than a hundred students.</p>
+  </section>
+
+  <section id="projects">
+    <h2>Selected work</h2>
+    <div class="cards">
+      <article class="card reveal">
+        <h3>PropFlow AI</h3>
+        <p>A production multi-tenant B2B real estate CRM. As team lead of five I designed and built the whole stack — Next.js front end, FastAPI back end, AWS Aurora PostgreSQL with Prisma — and deployed it on Vercel and Render. Tenant isolation is real isolation: PostgreSQL row-level security, role-based access control, and per-tenant data partitioning. On top of the CRM data model I wired OpenAI Agents SDK workflows to qualify leads and automate follow-up.</p>
+      </article>
+      <article class="card reveal">
+        <h3>ZARIYA</h3>
+        <p>A fashion and beauty e-commerce platform I co-founded. I own the full stack — product data modelling, cart and checkout flows, the design system — built on Next.js 16 (App Router), Tailwind CSS v4, Sanity CMS and Neon PostgreSQL with Prisma 7, and deployed on Vercel.</p>
+      </article>
+      <article class="card reveal">
+        <h3>Blast Radius Impact Agent</h3>
+        <p>A GitLab Transcend Hackathon project, published to the GitLab AI Catalog. It is a FastAPI + OpenAI Agents SDK pipeline that ingests merge-request data, walks a code knowledge graph, and computes the downstream impact of a proposed change before it lands.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="skills">
+    <h2>Skills</h2>
+    <ul class="chips">
+      <li>React</li>
+      <li>Next.js 15/16 (App Router)</li>
+      <li>TypeScript</li>
+      <li>Tailwind CSS</li>
+      <li>ShadCN UI</li>
+      <li>Framer Motion</li>
+      <li>Zustand</li>
+      <li>Python</li>
+      <li>FastAPI</li>
+      <li>Node.js</li>
+      <li>REST API design</li>
+      <li>Prisma ORM</li>
+      <li>PostgreSQL</li>
+      <li>MongoDB</li>
+      <li>SQLite</li>
+      <li>Redis</li>
+      <li>Docker</li>
+      <li>Kubernetes</li>
+      <li>GitHub Actions</li>
+      <li>Vercel</li>
+      <li>Render</li>
+      <li>AWS</li>
+      <li>OpenAI Agents SDK</li>
+      <li>Gemini API</li>
+      <li>prompt engineering</li>
+      <li>Git &amp; GitHub</li>
+      <li>Figma</li>
+      <li>Stripe</li>
+      <li>ShipEngine</li>
+      <li>Sanity CMS</li>
+    </ul>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p class="closing">If your team works while Karachi sleeps, I&rsquo;m already on the clock.</p>
+    <ul class="contact-list">
+      <li><a href="mailto:munibavirtualuni@gmail.com">munibavirtualuni@gmail.com</a></li>
+      <li><a href="https://github.com/munibaweb123">github.com/munibaweb123</a></li>
+      <li><a href="https://www.linkedin.com/in/muniba-ahmed-4936391a4">linkedin.com/in/muniba-ahmed-4936391a4</a></li>
+      <li><a href="tel:+923420024683">+92 342 0024683</a></li>
+    </ul>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  document.documentElement.classList.add('js');
+
+  var root = document.documentElement;
+  var btn = document.getElementById('shift');
+  var open = false;
+  btn.addEventListener('click', function () {
+    open = !open;
+    if (open) {
+      root.setAttribute('data-theme', 'day');
+      btn.textContent = 'Back to the night';
+    } else {
+      root.removeAttribute('data-theme');
+      btn.textContent = 'Shift to day';
+    }
+    btn.setAttribute('aria-pressed', open ? 'true' : 'false');
+  });
+
+  var links = document.querySelectorAll('.topbar a[href^="#"]');
+  var sections = [];
+  links.forEach(function (l) {
+    var s = document.querySelector(l.getAttribute('href'));
+    if (s) sections.push(s);
+  });
+  function spy() {
+    var pos = (root.scrollTop || document.body.scrollTop) + 80;
+    var cur = sections[0];
+    sections.forEach(function (s) { if (s.offsetTop <= pos) cur = s; });
+    links.forEach(function (l) {
+      l.classList.toggle('on', l.getAttribute('href') === '#' + cur.id);
+    });
+  }
+  document.addEventListener('scroll', spy, { passive: true });
+  spy();
+
+  var reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.15 });
+    reveals.forEach(function (n) { io.observe(n); });
+  } else {
+    reveals.forEach(function (n) { n.classList.add('in'); });
+  }
+})();
+</script>
+
+</body>
+</html>
