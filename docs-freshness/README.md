@@ -71,12 +71,16 @@ today:
 | 4 | Same folder, broadened `allowedTools` to batch checks | **$0.07** before hitting an unrelated account rate limit — confirmed the batching fix, not just luck |
 | 5 | `doorbell`, full run after the rate limit cleared | **$0.49**, clean day, correctly posted to the tracking issue |
 | 6 | `fix-loop` (larger folder — more files), $0.60 cap | Hit the cap again — a bigger folder genuinely costs more, not a bug |
-| 7 | Same folder, $1.20 cap | Completed — see [below](#the-shipped-fix) |
+| 7 | Same folder, $1.20 cap | Maker completed, but the reviewer crashed: `--agent 'docs-freshness-reviewer' not found` |
+| 8 | Same run, after fixing `run-beat.sh` to `cd` into the worktree before invoking `claude -p` | Reviewer still not found — turned out agent discovery needs cwd to be the *exact* folder holding `.claude/agents/`, confirmed with a throwaway worktree; `cd "$WT"` (the repo root) wasn't specific enough |
+| 9 | Same run, reviewer now `cd`'d to `$WT/docs-freshness` specifically | **Complete.** Maker: $0.95. Reviewer: $0.086, `VERDICT: PASS`. PR opened, tracking issue posted, worktree cleaned up. |
 
-Three real, different root causes, three real fixes, in order: scope, tool
-restriction, then per-folder cost variance. None of this was hypothetical — every
-row is a logged run in a real `.maker-*.json`/`.review-*.json` from
-`claude -p --output-format json`.
+Four real, different root causes, four real fixes, in order: survey scope, a tool
+restriction blocking batching, per-folder cost variance, then two distinct
+cwd-scoping bugs in how `run-beat.sh` invoked `claude -p` itself. None of this was
+hypothetical — every row is a logged run in a real `.maker-*.json`/`.review-*.json`
+from `claude -p --output-format json`, or a crash message read directly off the
+terminal.
 
 ## The shipped fix
 
@@ -84,8 +88,14 @@ To prove the "found something → reviewer verifies it → PR opens" path actual
 fires — not just the clean-day path — I planted a real, small, reversible drift on
 purpose: a fabricated `scripts/verify.sh` row added to `fix-loop/README.md`'s
 table, a file that doesn't exist. The loop, unprompted beyond its normal daily
-run, found it, removed the false claim, had it independently verified, and opened
-a PR. See that PR for the actual diff and the reviewer's stated reasoning.
+run, found it, removed the false claim, and — notably — also investigated and
+*dismissed* two false positives its own survey script had raised (a `../` path it
+mis-joined, a leading dot its own `lstrip` call ate), and flagged one genuine
+ambiguity in `fix-loop`'s own docs as worth a human's judgment rather than
+guessing a fix for it. Reviewed independently, verdict PASS, and
+[opened as a real PR](https://github.com/munibaweb123/loop-engineering/pull/3) —
+still open, waiting on a human (me, over the coming week) to actually merge it.
+The loop ships PRs; it doesn't merge them.
 
 ## Trying it yourself
 
