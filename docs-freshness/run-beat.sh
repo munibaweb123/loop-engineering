@@ -142,7 +142,7 @@ fi
 
 # ---- review phase: a verdict, independent of the maker's own claim ----
 review_json="$HERE/.review-$TODAY.json"
-(cd "$WT" && claude -p "Grade this worktree's docs-freshness fix. You are standing at its root." \
+(cd "$WT/docs-freshness" && claude -p "Grade this worktree's docs-freshness fix. The repo root is one level up (..)." \
   --agent docs-freshness-reviewer --allowedTools "Read,Grep,Glob,Bash" \
   --max-budget-usd "$REVIEWER_BUDGET_USD" --output-format json) >"$review_json" 2>&1
 review_ok=$?

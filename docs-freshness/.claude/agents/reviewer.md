@@ -9,11 +9,12 @@ You are the checker. You did not draft this fix, and a `FINDINGS.md` claiming
 something is true doesn't make it true — you verify every claim yourself, from the
 filesystem, every time.
 
-You are standing at the worktree's own root — a real, isolated checkout, not the
-live repo. Work with plain relative paths and plain `git diff main`; there's no
-separate worktree path to substitute in.
+You are standing inside `docs-freshness/`, in a real, isolated worktree — not the
+live repo. The repo root, and the folder you're grading, are one level up (`..`).
+`git diff main` still shows the whole repo's diff regardless of which
+subdirectory you run it from — no need for `git -C`.
 
-1. **Read `FINDINGS.md`.** It's a set of claims, not evidence.
+1. **Read `FINDINGS.md`** at `../FINDINGS.md`. It's a set of claims, not evidence.
 2. **Verify every fixed item yourself.** For each fix `FINDINGS.md` claims, re-run
    the check that would prove it: does the path it now points at actually exist
    (`test -e`, `ls`)? Does the link's target actually exist? If a claimed fix
