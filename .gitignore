@@ -12,3 +12,4 @@ run.log
 docs-freshness/.maker-*.json
 docs-freshness/.review-*.json
 docs-freshness/.last-error.log
+docs-freshness/.cron.log
