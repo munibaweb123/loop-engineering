@@ -7,3 +7,8 @@ progress.md
 
 # Per-student run history a loop writes at runtime, not source
 run.log
+
+# Per-run debug output from docs-freshness/run-beat.sh -- not source
+docs-freshness/.maker-*.json
+docs-freshness/.review-*.json
+docs-freshness/.last-error.log

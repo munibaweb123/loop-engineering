@@ -1,0 +1,113 @@
+# Docs Freshness — the capstone daily loop
+
+**Loop Engineering — capstone, all six parts.**
+
+A real, boring, recurring chore, automated end to end: keep this repo's own project
+docs from drifting away from what's actually on disk. It already caught two real bugs
+by hand this week (a broken `check.py` path in three files, a `main` branch that sat
+unpushed) — this loop is that same check, running itself, daily, unattended.
+
+## The six parts
+
+| Part | Where |
+| --- | --- |
+| **Heartbeat** | A daily `/schedule` Routine firing [`run-beat.sh`](run-beat.sh). |
+| **Worktree** | One isolated `git worktree` per day, off `main` (Concept 8). |
+| **Skill** | [`.claude/skills/docs-freshness/SKILL.md`](.claude/skills/docs-freshness/SKILL.md) — the implementer's playbook. |
+| **Maker-checker** | The implementer drafts; [`.claude/agents/reviewer.md`](.claude/agents/reviewer.md) independently re-verifies every claim before anything ships (Concept 11). |
+| **Connector** | [Tracking issue #2](https://github.com/munibaweb123/loop-engineering/issues/2) — one comment per day, whatever happened. A PR opens only on a verified fix. |
+| **Spine** | [`progress.md`](progress.md) (gitignored, per-repo runtime state) — folder rotation, idempotency, and the trailing-week cost, read first and written last. |
+
+## The chore, precisely
+
+One project folder a day (rotating — see [Why one folder a day](#why-one-folder-a-day-not-the-whole-repo)),
+checked for:
+
+1. A path named in that folder's `README.md`/`SKILL.md`/`AGENTS.md`/
+   `.claude/agents/*.md` that doesn't actually exist.
+2. A dead relative link to another project folder.
+3. The top-level `README.md`'s project table drifting from the real folder list.
+4. A project writing its own runtime state without gitignoring it.
+
+Full scope rules, and what's deliberately *out* of scope (anything needing live
+CLI/web knowledge, anything needing a test run to verify, prose/tone), are in the
+skill — read it before trusting what this ships.
+
+## Budget guards
+
+- **Per-call cap.** `--max-budget-usd` on both the implementer and the reviewer.
+  Currently $1.20 / $0.30 — see [What $1.20 actually bought](#what-120-actually-bought-a-real-cost-story)
+  for why that number is what it is, not a guess.
+- **Weekly cap.** `run-beat.sh` sums the trailing 7 days' logged cost from the
+  spine; at $5.00 it skips the maker entirely and posts a `NEEDS_HUMAN` comment
+  instead of spending more, until a human clears it.
+- **One PR at a time.** Before opening a PR, it checks for an existing open one
+  from this loop and holds rather than stacks — a human's review queue is a
+  budget too.
+- **Idempotency.** One run per calendar day, checked against the spine, so a
+  double-fired schedule can't double-spend.
+
+## Why one folder a day, not the whole repo
+
+The first design surveyed the *entire* repo every run. Measured, that was a
+$1+ task — and it only grows as the repo does. That's the wrong shape for
+something that's supposed to run **daily, forever**: a chore whose cost scales
+with total repo size doesn't stay boring. So the spine now tracks a rotation
+pointer (`next-folder:`) and each day's run is scoped to exactly one project
+folder, plus two repo-wide checks cheap enough to always run. A normal week
+touches every folder in the repo at least once, at a small, predictable cost per
+day, instead of one large cost up front.
+
+## What $1.20 actually bought — a real cost story
+
+Every number below is measured, not estimated, from actually running this loop
+today:
+
+| Attempt | What happened | Cost |
+| --- | --- | --- |
+| 1 | Full-repo survey, $0.50 cap | Hit the cap mid-survey — too big a task |
+| 2 | Full-repo survey, $1.00 cap | Hit the cap again, closer to done — confirmed the *scope*, not the cap, was wrong |
+| 3 | Redesigned to one folder/day (`doorbell`), $0.60 cap | Hit the cap at 26 tool-call turns — the *implementer* was checking one path per `ls` call because my own `--allowedTools` restriction blocked it from writing one combined script |
+| 4 | Same folder, broadened `allowedTools` to batch checks | **$0.07** before hitting an unrelated account rate limit — confirmed the batching fix, not just luck |
+| 5 | `doorbell`, full run after the rate limit cleared | **$0.49**, clean day, correctly posted to the tracking issue |
+| 6 | `fix-loop` (larger folder — more files), $0.60 cap | Hit the cap again — a bigger folder genuinely costs more, not a bug |
+| 7 | Same folder, $1.20 cap | Completed — see [below](#the-shipped-fix) |
+
+Three real, different root causes, three real fixes, in order: scope, tool
+restriction, then per-folder cost variance. None of this was hypothetical — every
+row is a logged run in a real `.maker-*.json`/`.review-*.json` from
+`claude -p --output-format json`.
+
+## The shipped fix
+
+To prove the "found something → reviewer verifies it → PR opens" path actually
+fires — not just the clean-day path — I planted a real, small, reversible drift on
+purpose: a fabricated `scripts/verify.sh` row added to `fix-loop/README.md`'s
+table, a file that doesn't exist. The loop, unprompted beyond its normal daily
+run, found it, removed the false claim, had it independently verified, and opened
+a PR. See that PR for the actual diff and the reviewer's stated reasoning.
+
+## Trying it yourself
+
+```sh
+./run-beat.sh
+```
+
+Idempotent (skips if today already ran), reads the spine for which folder is up,
+and does the whole body — draft, review, ship or hold, log — without further
+prompting. To rehearse a day with something to fix, plant a small real drift
+first (a fabricated path, like above) and revert it once you've seen the result.
+
+## Concept 15, honestly
+
+*"Did your understanding of the project keep up with what the loop changed?"*
+
+Today: yes, because I read every failure as it happened and changed the design
+each time — this README's cost table **is** that record, not a summary written
+after the fact. But today was one sitting with me watching every run. The real
+test is the week ahead: whether I keep reading [issue #2](https://github.com/munibaweb123/loop-engineering/issues/2)
+daily, or start trusting a green checkmark instead. I'm not claiming that yet —
+this file gets an honest update once there's a week of unattended runs to judge
+it against, not before. If a day comes where I can't explain what the loop
+shipped without re-reading the diff myself, that's the signal to slow the
+schedule down, not to stop reading.
