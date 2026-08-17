@@ -13,6 +13,7 @@ A loop runs on a **heartbeat** and remembers through a **spine**. The heartbeat 
 | 6 | Unattended schedules (runs while you sleep) | [The Sky Watch](sky-watch/) |
 | 7 | Event-driven loops (react when something happens) | [The Doorbell](doorbell/) |
 | 8, 9, 11 | Worktree isolation, skills, maker-checker | [Fix Loop](fix-loop/) |
+| 8, 11 | Dynamic-workflows interlude (an engine vs. a loop) | [Codify the Body](fix-loop-workflow/) |
 | 12 | The spine (memory between runs) | [What's New on arXiv](paper-watch/) |
 
 ## Prerequisites
