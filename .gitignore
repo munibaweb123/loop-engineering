@@ -4,3 +4,6 @@ __pycache__/
 
 # The spine — per-student memory each project writes at runtime, not source
 progress.md
+
+# Per-student run history a loop writes at runtime, not source
+run.log

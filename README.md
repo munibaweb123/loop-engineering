@@ -15,6 +15,7 @@ A loop runs on a **heartbeat** and remembers through a **spine**. The heartbeat 
 | 8, 9, 11 | Worktree isolation, skills, maker-checker | [Fix Loop](fix-loop/) |
 | 8, 11 | Dynamic-workflows interlude (an engine vs. a loop) | [Codify the Body](fix-loop-workflow/) |
 | 12 | The spine (memory between runs) | [What's New on arXiv](paper-watch/) |
+| 13, 14 | Observability: cost math, and failing loudly instead of silently | [paper-watch/OBSERVABILITY.md](paper-watch/OBSERVABILITY.md) |
 
 ## Prerequisites
 

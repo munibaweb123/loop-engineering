@@ -90,11 +90,20 @@ schedule.
 while you sleep." In Claude Code:
 
 ```
-/schedule every weekday at 9am, run the paper-watch skill and show me what's new
+/schedule every weekday at 9am, run ./run-beat.sh and show me what's new
 ```
 
 arXiv updates about **once a day**, so a daily schedule is exactly the right rhythm.
 This is the pairing the project is built for: **spine + scheduled Routine.**
+
+Point the schedule at **[`run-beat.sh`](run-beat.sh)**, not at `paperwatch.py`
+directly. `paperwatch.py` can only report its own errors — it can't say anything
+about a failure that happens before it starts (a moved script, a typo'd path). The
+wrapper can, because it doesn't depend on the thing it's watching: every firing,
+success or crash, gets exactly one line in `run.log`. See
+**[OBSERVABILITY.md](OBSERVABILITY.md)** for what a rehearsed overnight failure
+looks like from that log alone, and what running this loop actually costs per
+month at this cadence.
 
 **Not `/loop`, and not `/goal`** — and it's worth knowing why:
 
