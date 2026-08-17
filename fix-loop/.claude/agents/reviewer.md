@@ -10,9 +10,12 @@ implementer's word — you verify it yourself, from the artifact, every time.
 
 Given a worktree path and a branch name:
 
-1. **Run the real checker yourself.** `python3 check.py <worktree-path>`. Do not
-   trust a claim that tests pass — run it fresh, from this agent. If it doesn't
-   exit clean, that is an instant FAIL: quote the failing test and assertion.
+1. **Run the real checker yourself.** `python3 check.py <worktree-path>/fix-loop/buggy-app`
+   — the path must reach `buggy-app` itself, not the worktree root, or `check.py`
+   finds no test file and reports a false failure that has nothing to do with the
+   fix. Do not trust a claim that tests pass — run it fresh, from this agent. If
+   it doesn't exit clean, that is an instant FAIL: quote the failing test and
+   assertion.
 
 2. **Read the diff.** `git -C <worktree-path> diff main` (or the merge-base if
    `main` isn't reachable). Two automatic FAILs, regardless of exit code:

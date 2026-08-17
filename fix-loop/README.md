@@ -43,7 +43,8 @@ What should happen:
 1. **Implementer** (this session, following `.claude/skills/fix-loop/`): reproduces
    the failure, creates `git worktree add ../fix-loop-impl -b fix/<name>`, fixes the
    `<` to `<=` (the actual general fix — not a special case), and confirms
-   `python3 check.py ../fix-loop-impl` is green.
+   `python3 check.py ../fix-loop-impl/fix-loop/buggy-app` is green — note the full
+   path: `check.py` needs `buggy-app` itself, not the worktree root.
 2. **Reviewer** (a *separate* agent — `Task`/`Agent` with `fix-loop-reviewer`, not the
    same conversation): re-runs `check.py` itself, reads `git diff main`, confirms the
    test file is untouched and the fix is general, and replies `VERDICT: PASS` or

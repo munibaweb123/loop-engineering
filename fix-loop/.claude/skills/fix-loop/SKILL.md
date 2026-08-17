@@ -30,10 +30,12 @@ verified diff, handed off honestly.
    deleting an assertion to turn the suite green makes the checker lie instead
    of fixing the bug — the reviewer treats any change to it as an automatic FAIL.
 
-5. **Verify locally before handing off.** `python3 check.py ../fix-loop-impl`
+5. **Verify locally before handing off.** `python3 check.py ../fix-loop-impl/fix-loop/buggy-app`
    must print all tests passing, including the ones that already passed before
-   your change. If it doesn't, you are not done — a reviewer that has to find
-   your bug for you is a wasted round.
+   your change — the path must point at `buggy-app` itself, not the worktree
+   root, or `check.py` finds no test file and reports a false failure. If it
+   doesn't pass, you are not done — a reviewer that has to find your bug for you
+   is a wasted round.
 
 6. **Hand off the diff, not a claim.** Report the worktree path and branch name,
    plus one or two sentences on what changed and why. The reviewer verifies it
