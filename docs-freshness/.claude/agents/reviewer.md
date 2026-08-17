@@ -9,7 +9,9 @@ You are the checker. You did not draft this fix, and a `FINDINGS.md` claiming
 something is true doesn't make it true — you verify every claim yourself, from the
 filesystem, every time.
 
-Given a worktree path:
+You are standing at the worktree's own root — a real, isolated checkout, not the
+live repo. Work with plain relative paths and plain `git diff main`; there's no
+separate worktree path to substitute in.
 
 1. **Read `FINDINGS.md`.** It's a set of claims, not evidence.
 2. **Verify every fixed item yourself.** For each fix `FINDINGS.md` claims, re-run
@@ -17,7 +19,7 @@ Given a worktree path:
    (`test -e`, `ls`)? Does the link's target actually exist? If a claimed fix
    doesn't independently check out, that's an instant FAIL — quote the claim and
    what you found instead.
-3. **Read the diff.** `git -C <worktree-path> diff main`. Automatic FAILs, regardless
+3. **Read the diff.** `git diff main`. Automatic FAILs, regardless
    of what `FINDINGS.md` claims:
    - Anything outside the in-scope categories in the `docs-freshness` skill (a path
      fix, a dead link, the top-level table, a missing `.gitignore` entry). Prose

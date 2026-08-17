@@ -79,10 +79,10 @@ if ! git worktree add -q "$WT" -b "$BRANCH" main 2>"$HERE/.last-error.log"; then
   exit 1
 fi
 
-maker_prompt="Use the docs-freshness skill from the repo root. You are already in your own isolated worktree at $WT -- do not create another one. Today's assigned project folder is '$TARGET_FOLDER' -- check only that folder's docs, plus the two repo-wide checks (top-level README table, .gitignore consistency) the skill says to always run. Write FINDINGS.md in the worktree root before you finish, even if there was nothing to fix."
+maker_prompt="Use the docs-freshness skill. You are already in your own isolated worktree, standing at the repo root -- do not create another one. Today's assigned project folder is '$TARGET_FOLDER' -- check only that folder's docs, plus the two repo-wide checks (top-level README table, .gitignore consistency) the skill says to always run. Write FINDINGS.md at the repo root before you finish, even if there was nothing to fix."
 maker_json="$HERE/.maker-$TODAY.json"
-claude -p "$maker_prompt" --allowedTools "Read,Edit,Grep,Glob,Bash" \
-  --max-budget-usd "$MAKER_BUDGET_USD" --output-format json >"$maker_json" 2>&1
+(cd "$WT" && claude -p "$maker_prompt" --allowedTools "Read,Edit,Grep,Glob,Bash" \
+  --max-budget-usd "$MAKER_BUDGET_USD" --output-format json) >"$maker_json" 2>&1
 maker_ok=$?
 
 maker_cost="$(python3 -c "import json,sys
@@ -142,9 +142,9 @@ fi
 
 # ---- review phase: a verdict, independent of the maker's own claim ----
 review_json="$HERE/.review-$TODAY.json"
-claude -p "Grade this worktree's docs-freshness fix. Worktree path: $WT." \
+(cd "$WT" && claude -p "Grade this worktree's docs-freshness fix. You are standing at its root." \
   --agent docs-freshness-reviewer --allowedTools "Read,Grep,Glob,Bash" \
-  --max-budget-usd "$REVIEWER_BUDGET_USD" --output-format json >"$review_json" 2>&1
+  --max-budget-usd "$REVIEWER_BUDGET_USD" --output-format json) >"$review_json" 2>&1
 review_ok=$?
 
 review_cost="$(python3 -c "import json,sys
