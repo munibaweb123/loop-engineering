@@ -11,7 +11,7 @@ unpushed) — this loop is that same check, running itself, daily, unattended.
 
 | Part | Where |
 | --- | --- |
-| **Heartbeat** | A daily `/schedule` Routine firing [`run-beat.sh`](run-beat.sh). |
+| **Heartbeat** | A local `cron` entry, weekdays 9am PKT, firing [`run-beat.sh`](run-beat.sh). See [why not `/schedule`](#why-a-local-cron-and-not-schedule). |
 | **Worktree** | One isolated `git worktree` per day, off `main` (Concept 8). |
 | **Skill** | [`.claude/skills/docs-freshness/SKILL.md`](.claude/skills/docs-freshness/SKILL.md) — the implementer's playbook. |
 | **Maker-checker** | The implementer drafts; [`.claude/agents/reviewer.md`](.claude/agents/reviewer.md) independently re-verifies every claim before anything ships (Concept 11). |
@@ -46,6 +46,37 @@ skill — read it before trusting what this ships.
   budget too.
 - **Idempotency.** One run per calendar day, checked against the spine, so a
   double-fired schedule can't double-spend.
+
+## Why a local cron, and not `/schedule`
+
+`/schedule` creates a **cloud** routine: a fresh, isolated cloud session with its
+own git clone, not a job on this machine. Two real problems with pointing it at
+`run-beat.sh` as originally planned: GitHub wasn't connected for this repo in the
+cloud environment yet (`/web-setup` required, a human OAuth step I can't do), and
+`run-beat.sh` as built assumes local execution — local absolute paths, and it was
+proven today shelling out to the *locally*-authenticated `claude` and `gh` CLIs,
+neither verified to behave the same in a fresh cloud sandbox. Rather than bet the
+capstone's first week on an unverified rewrite, the heartbeat is a local `crontab`
+entry instead — the exact mechanism already proven working, end to end, today:
+
+```
+PATH=/home/munibapc/.npm-global/bin:/home/munibapc/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+0 9 * * 1-5 bash <absolute-repo-path>/docs-freshness/run-beat.sh >> <absolute-repo-path>/docs-freshness/.cron.log 2>&1
+```
+
+Verified for real, not assumed: scheduled a one-off test fire two minutes out,
+watched `.cron.log` for it, and cron correctly resolved `PATH`, invoked `bash`,
+and `run-beat.sh` correctly resolved its own paths and hit the idempotency guard
+(`already ran today`) — free, since no `claude -p` call happens on that path.
+
+**The honest caveat**: this machine runs Claude Code inside WSL2. Cron only fires
+while the WSL2 instance is up, which (on this machine) means while at least one
+WSL session is attached — not automatically "while you sleep" the way a cloud
+routine would be, unless the machine and WSL stay running overnight. Check with
+`crontab -l` and `service cron status`; if a scheduled morning is missing from
+[the tracking issue](https://github.com/munibaweb123/loop-engineering/issues/2)
+entirely (not even a `NEEDS_HUMAN` comment), the machine being off overnight is
+the first thing to check, before suspecting the loop itself.
 
 ## Why one folder a day, not the whole repo
 
