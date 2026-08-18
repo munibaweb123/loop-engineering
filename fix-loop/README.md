@@ -17,7 +17,6 @@ itself, and reads the diff for the specific ways a fix can cheat.
 | `check.py` | The mechanical checker. `python3 check.py buggy-app` |
 | `.claude/skills/fix-loop/` | The implementer's fix steps (Concept 9). |
 | `.claude/agents/reviewer.md` | The checker agent (Concept 11) — read-mostly, runs the real checker itself, replies PASS/FAIL with reasons. |
-| `scripts/verify.sh` | Convenience wrapper around `check.py`. |
 
 ## The bug
 
