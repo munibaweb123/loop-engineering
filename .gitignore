@@ -13,3 +13,6 @@ docs-freshness/.maker-*.json
 docs-freshness/.review-*.json
 docs-freshness/.last-error.log
 docs-freshness/.cron.log
+
+# Dummy secret for the loop-eng crash course secrets drill (Project 10)
+.env
