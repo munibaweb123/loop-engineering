@@ -1,0 +1,7 @@
+# Ignore runtime state
+*.log
+*.tmp
+
+# Ignore any local secrets (bearer tokens should NEVER be in the repo)
+.env
+*.secret
